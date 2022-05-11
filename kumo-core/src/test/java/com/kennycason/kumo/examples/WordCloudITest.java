@@ -4,6 +4,7 @@ import com.kennycason.kumo.CollisionMode;
 import com.kennycason.kumo.WordCloud;
 import com.kennycason.kumo.WordFrequency;
 import com.kennycason.kumo.bg.CircleBackground;
+import com.kennycason.kumo.bg.EllipseBackground;
 import com.kennycason.kumo.bg.PixelBoundaryBackground;
 import com.kennycason.kumo.bg.RectangleBackground;
 import com.kennycason.kumo.font.FontWeight;
@@ -20,10 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Created by kenny on 6/29/14.
@@ -120,6 +123,27 @@ public class WordCloudITest {
     }
 
     @Test
+    public void ellipseImgLargeTest() throws IOException {
+        final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
+        frequencyAnalyzer.setWordFrequenciesToReturn(600);
+        frequencyAnalyzer.setMinWordLength(5);
+        frequencyAnalyzer.setStopWords(loadStopWords());
+
+        final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(getInputStream("text/datarank.txt"));
+        final Dimension dimension = new Dimension(1450, 950);
+        final WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
+        wordCloud.setPadding(1);
+        wordCloud.setBackgroundColor(Color.WHITE);
+        wordCloud.setBackground(new PixelBoundaryBackground(getInputStream("backgrounds/ellipse3.png")));
+        wordCloud.setKumoFont(new KumoFont("Impact", FontWeight.PLAIN));
+        wordCloud.setColorPalette(new ColorPalette(new Color(0x4055F1), new Color(0x408DF1), new Color(0x40AAF1), new Color(0x40C5F1), new Color(0x40D3F1), new Color(0x000000)));
+        wordCloud.setFontScalar(new SqrtFontScalar(10, 50));
+        //wordCloud.setWordStartStrategy(new CenterWordStart());
+        wordCloud.build(wordFrequencies);
+        wordCloud.writeToFile("output/ellipse3_wordcloud_large_impact.png");
+    }
+
+    @Test
     public void whaleImgSmallTest() throws IOException {
         final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
         frequencyAnalyzer.setWordFrequenciesToReturn(300);
@@ -155,6 +179,7 @@ public class WordCloudITest {
         wordCloud.build(wordFrequencies);
         wordCloud.writeToFile("output/whale_wordcloud_small_angles4.png");
     }
+
 
     @Test
     public void whaleImgLargeAnglesTest() throws IOException {
@@ -213,6 +238,27 @@ public class WordCloudITest {
         wordCloud.build(wordFrequencies);
         LOGGER.info("Took {}ms to build", System.currentTimeMillis() - startTime);
         wordCloud.writeToFile("output/datarank_wordcloud_circle_large2.png");
+    }
+
+    @Test
+    public void datarankEllipseLarge() throws IOException {
+        final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
+        frequencyAnalyzer.setWordFrequenciesToReturn(750);
+        frequencyAnalyzer.setMinWordLength(5);
+        frequencyAnalyzer.setStopWords(loadStopWords());
+
+        final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(getInputStream("text/datarank.txt"));
+        final Dimension dimension = new Dimension(1000, 600);
+        final WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
+        wordCloud.setPadding(2);
+        wordCloud.setBackground(new EllipseBackground(500, 300));
+        wordCloud.setBackgroundColor(Color.WHITE);
+        wordCloud.setColorPalette(new ColorPalette(new Color(0x4055F1), new Color(0x408DF1), new Color(0x40AAF1), new Color(0x40C5F1), new Color(0x40D3F1), new Color(0xFFFFFF)));
+        wordCloud.setFontScalar(new SqrtFontScalar(10, 50));
+        final long startTime = System.currentTimeMillis();
+        wordCloud.build(wordFrequencies);
+        LOGGER.info("Took {}ms to build", System.currentTimeMillis() - startTime);
+        wordCloud.writeToFile("output/datarank_wordcloud_ellipse_large.png");
     }
 
     @Test
