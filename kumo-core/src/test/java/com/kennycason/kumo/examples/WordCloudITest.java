@@ -14,6 +14,7 @@ import com.kennycason.kumo.font.scale.SqrtFontScalar;
 import com.kennycason.kumo.image.AngleGenerator;
 import com.kennycason.kumo.nlp.FrequencyAnalyzer;
 import com.kennycason.kumo.palette.ColorPalette;
+import com.kennycason.kumo.wordstart.CenterWordStart;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,6 +50,22 @@ public class WordCloudITest {
         wordCloud.writeToFile("output/wordcloud_circle.png");
     }
 
+    @Test
+    public void simpleDiyCircleTest() throws IOException {
+        final List<WordFrequency> wordFrequencies = buildWordFrequencies().subList(0, 150);
+        final Dimension dimension = new Dimension(600, 600);
+        final WordCloud wordCloud = new WordCloud(dimension, CollisionMode.RECTANGLE);
+        wordCloud.setPadding(0);
+        wordCloud.setBackground(new CircleBackground(300));
+        wordCloud.setColorPalette(buildRandomColorPalette(20));
+        wordCloud.setFontScalar(new LinearFontScalar(10, 40));
+        wordCloud.setBackgroundColor(Color.white);
+        wordCloud.setWordStartStrategy(new CenterWordStart());
+        // 设置字体不旋转
+        wordCloud.setAngleGenerator(new AngleGenerator(new double[]{0.0d}));
+        wordCloud.build(wordFrequencies);
+        wordCloud.writeToFile("output/wordcloud_circle_diy.png");
+    }
 
     @Test
     public void simpleRectangleTest() throws IOException {
