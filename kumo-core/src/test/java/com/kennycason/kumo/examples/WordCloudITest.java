@@ -13,6 +13,7 @@ import com.kennycason.kumo.font.scale.LinearFontScalar;
 import com.kennycason.kumo.font.scale.SqrtFontScalar;
 import com.kennycason.kumo.image.AngleGenerator;
 import com.kennycason.kumo.nlp.FrequencyAnalyzer;
+import com.kennycason.kumo.nlp.tokenizers.ChineseWordTokenizer;
 import com.kennycason.kumo.palette.ColorPalette;
 import com.kennycason.kumo.wordstart.CenterWordStart;
 import org.apache.commons.io.IOUtils;
@@ -65,6 +66,26 @@ public class WordCloudITest {
         wordCloud.setAngleGenerator(new AngleGenerator(new double[]{0.0d}));
         wordCloud.build(wordFrequencies);
         wordCloud.writeToFile("output/wordcloud_circle_diy.png");
+    }
+
+    @Test
+    public void testChinese() throws IOException {
+        final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
+        frequencyAnalyzer.setWordFrequenciesToReturn(600);
+        frequencyAnalyzer.setMinWordLength(2);
+        frequencyAnalyzer.setWordTokenizer(new ChineseWordTokenizer());
+
+        final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(getInputStream("text/chinese_language.txt"));
+        final Dimension dimension = new Dimension(600, 600);
+        final WordCloud wordCloud = new WordCloud(dimension, CollisionMode.PIXEL_PERFECT);
+        wordCloud.setPadding(2);
+        KumoFont kumoFont = new KumoFont("simsun",FontWeight.PLAIN);
+        wordCloud.setKumoFont(kumoFont);
+        wordCloud.setBackground(new CircleBackground(300));
+        wordCloud.setColorPalette(new ColorPalette(new Color(0xD5CFFA), new Color(0xBBB1FA), new Color(0x9A8CF5), new Color(0x806EF5)));
+        wordCloud.setFontScalar(new SqrtFontScalar(12, 45));
+        wordCloud.build(wordFrequencies);
+        wordCloud.writeToFile("output/chinese_language_circle_1.png");
     }
 
     @Test

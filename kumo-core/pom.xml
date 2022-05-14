@@ -44,6 +44,11 @@
             <artifactId>rtree</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.kennycason</groupId>
+            <artifactId>kumo-tokenizers</artifactId>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
